@@ -42,6 +42,7 @@ export class User {
 
 	@Prop({
 		required: true,
+		unique: true,
 		// TODO: handle email validation
 	})
 	email: string;
@@ -53,6 +54,7 @@ export class User {
 
 	@Prop({
 		required: true,
+		unique: true,
 		validate: isValidUserId,
 	})
 	userId: string;
