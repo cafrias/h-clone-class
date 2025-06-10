@@ -13,4 +13,8 @@ export class UserService {
 		// TODO: handle conflict issues
 		return newUser;
 	}
+
+	async getUserByUserId(userId: string): Promise<UserDocument | null> {
+		return await this.userModel.findOne({ userId });
+	}
 }
