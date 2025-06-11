@@ -12,12 +12,22 @@ import { UserService } from './user.service';
 import { UserResponseDto } from './dto/user-reponse.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiConflictResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { ErrorResponseDto } from 'src/dto/error-response.dto';
 
 @Controller('user')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
 
 	@Post()
+	@ApiCreatedResponse({
+		description: 'The user has been successfully created.',
+		type: UserResponseDto,
+	})
+	@ApiConflictResponse({
+		description: 'The username or email is already taken.',
+		type: ErrorResponseDto,
+	})
 	async createUser(
 		@Body() createUserDto: CreateUserDto,
 	): Promise<UserResponseDto> {
