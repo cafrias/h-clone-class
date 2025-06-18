@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { FilterQuery, Model } from 'mongoose';
 import { CreateGroupDto } from './dto/create-group.dto';
-import { Group, GroupDocument } from './schemas/group.schema';
+import { Group, GROUP_ID_REGEX, GroupDocument } from './schemas/group.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { isMongoErrorWithKeyPattern } from 'src/errors/MongoErrorWithKeyPattern';
 import { GetGroupsQueryDto } from './dto/get-groups.dto';
@@ -32,5 +32,18 @@ export class GroupService {
 		}
 
 		return await this.groupModel.find(mongoQuery);
+	}
+
+	/**
+	 * Get a group by its ID or group ID
+	 * @param idOrGroupId The ID or group ID of the group
+	 * @returns The group
+	 */
+	async getGroup(idOrGroupId: string) {
+		if (GROUP_ID_REGEX.test(idOrGroupId)) {
+			return await this.groupModel.findOne({ groupId: idOrGroupId });
+		}
+
+		return await this.groupModel.findById(idOrGroupId);
 	}
 }
