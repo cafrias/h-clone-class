@@ -12,7 +12,12 @@ import { UserService } from './user.service';
 import { UserResponseDto } from './dto/user-reponse.dto';
 import { GetUserDto } from './dto/get-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiConflictResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import {
+	ApiConflictResponse,
+	ApiCreatedResponse,
+	ApiNotFoundResponse,
+	ApiOkResponse,
+} from '@nestjs/swagger';
 import { ErrorResponseDto } from 'src/dto/error-response.dto';
 
 @Controller('user')
@@ -36,6 +41,14 @@ export class UserController {
 	}
 
 	@Get(':userId')
+	@ApiOkResponse({
+		description: 'The user has been successfully retrieved.',
+		type: UserResponseDto,
+	})
+	@ApiNotFoundResponse({
+		description: 'The user with the given userId does not exist.',
+		type: ErrorResponseDto,
+	})
 	async getByUserId(@Param() params: GetUserDto): Promise<UserResponseDto> {
 		const user = await this.userService.getUserByUserId(params.userId);
 		if (!user) {

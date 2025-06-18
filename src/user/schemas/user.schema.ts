@@ -21,7 +21,8 @@ export function isValidDisplayName(displayName: string | undefined): boolean {
 	return displayName.length < 30;
 }
 
-const USER_ID_REGEX = /^acct:[A-Za-z0-9._][A-Za-z0-9._]{1,28}[A-Za-z0-9_]@.*$/;
+export const USER_ID_REGEX =
+	/^acct:[A-Za-z0-9._][A-Za-z0-9._]{1,28}[A-Za-z0-9_]@.*$/;
 
 export function isValidUserId(userId: string): boolean {
 	return USER_ID_REGEX.test(userId);
