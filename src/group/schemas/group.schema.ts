@@ -47,6 +47,8 @@ export class Group {
 		default: false,
 	})
 	scoped: boolean;
+
+	// TODO: include scopes https://h.readthedocs.io/en/latest/api-reference/v1/#tag/groups/paths/~1groups/get
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);
