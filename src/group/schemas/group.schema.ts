@@ -5,14 +5,18 @@ export type GroupDocument = HydratedDocument<Group>;
 
 export const GROUP_ID_REGEX = /group:[a-zA-Z0-9._\-+!~*()']{1,1024}@.*$/;
 
+export const GROUP_TYPES = ['private', 'restricted', 'open'] as const;
+
+export type GroupType = (typeof GROUP_TYPES)[number];
+
 @Schema()
 export class Group {
 	@Prop({
 		required: true,
-		enum: ['private', 'restricted', 'open'],
-		default: 'private',
+		enum: GROUP_TYPES,
+		default: GROUP_TYPES[0],
 	})
-	type: 'private' | 'restricted' | 'open';
+	type: GroupType;
 
 	@Prop({
 		required: true,
