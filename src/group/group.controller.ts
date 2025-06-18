@@ -4,6 +4,7 @@ import {
 	Get,
 	NotFoundException,
 	Param,
+	Patch,
 	Post,
 	Query,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import {
 import { ErrorResponseDto } from '../dto/error-response.dto';
 import { GetGroupsQueryDto } from './dto/get-groups.dto';
 import { GetGroupDto } from './dto/get-group.dto';
+import { UpdateGroupDto } from './dto/update-group.dto';
 
 @Controller('group')
 export class GroupController {
@@ -66,6 +68,38 @@ export class GroupController {
 			throw new NotFoundException(`Group ${getGroupDto.id} not found`);
 		}
 
+		return GroupResponseDto.create(group);
+	}
+
+	@Patch(':id')
+	@ApiOkResponse({ type: GroupResponseDto })
+	@ApiNotFoundResponse({
+		type: ErrorResponseDto,
+		example: {
+			statusCode: 404,
+			message: 'Group 123 not found',
+			error: 'Not Found',
+		},
+	})
+	@ApiConflictResponse({
+		type: ErrorResponseDto,
+		example: {
+			statusCode: 409,
+			message: 'Group ID already taken',
+			error: 'Conflict',
+		},
+	})
+	async updateGroup(
+		@Param() getGroupDto: GetGroupDto,
+		@Body() updateGroupDto: UpdateGroupDto,
+	): Promise<GroupResponseDto> {
+		const group = await this.groupService.updateGroup(
+			getGroupDto.id,
+			updateGroupDto,
+		);
+		if (!group) {
+			throw new NotFoundException(`Group ${getGroupDto.id} not found`);
+		}
 		return GroupResponseDto.create(group);
 	}
 }
