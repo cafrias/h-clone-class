@@ -47,6 +47,11 @@ export class UserController {
 	})
 	@ApiNotFoundResponse({
 		description: 'The user with the given userId does not exist.',
+		example: {
+			statusCode: 404,
+			message: 'User with userId acct:john_doe@example.com not found',
+			error: 'Not Found',
+		},
 		type: ErrorResponseDto,
 	})
 	async getByUserId(@Param() params: GetUserDto): Promise<UserResponseDto> {
@@ -61,6 +66,19 @@ export class UserController {
 	}
 
 	@Patch(':userId')
+	@ApiOkResponse({
+		description: 'The user has been successfully updated.',
+		type: UserResponseDto,
+	})
+	@ApiNotFoundResponse({
+		description: 'The user with the given userId does not exist.',
+		example: {
+			statusCode: 404,
+			message: 'User with userId acct:john_doe@example.com not found',
+			error: 'Not Found',
+		},
+		type: ErrorResponseDto,
+	})
 	async updateUser(
 		@Param() params: GetUserDto,
 		@Body() updateUserDto: UpdateUserDto,
