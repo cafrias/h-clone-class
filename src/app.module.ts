@@ -8,7 +8,12 @@ import { GroupModule } from './group/group.module';
 import { SeedModule } from './seed/seed.module';
 
 @Module({
-	imports: [UserModule, MongooseModule.forRoot(MONGO_URI), GroupModule, SeedModule],
+	imports: [
+		UserModule,
+		MongooseModule.forRoot(MONGO_URI),
+		GroupModule,
+		SeedModule,
+	],
 	controllers: [AppController],
 	providers: [AppService],
 })

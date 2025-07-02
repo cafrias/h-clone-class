@@ -21,10 +21,17 @@ import { ErrorResponseDto } from '../dto/error-response.dto';
 import { GetGroupsQueryDto } from './dto/get-groups.dto';
 import { GetGroupDto } from './dto/get-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { MembershipService } from './membership.service';
+import { CreateMembershipDto } from './dto/create-membership.dto';
+import { MembershipResponseDto } from './dto/membership-response.dto';
+import { GetMembershipDto } from './dto/get-membership.dto';
 
 @Controller('group')
 export class GroupController {
-	constructor(private readonly groupService: GroupService) {}
+	constructor(
+		private readonly groupService: GroupService,
+		private readonly membershipService: MembershipService,
+	) {}
 
 	@Post()
 	@ApiCreatedResponse({ type: GroupResponseDto })
@@ -101,5 +108,21 @@ export class GroupController {
 			throw new NotFoundException(`Group ${getGroupDto.id} not found`);
 		}
 		return GroupResponseDto.create(group);
+	}
+
+	@Post(':id/members/:userId')
+	@ApiCreatedResponse({ type: MembershipResponseDto })
+	async createMembership(
+		@Param() getGroupDto: GetMembershipDto,
+		@Body() createMembershipDto: CreateMembershipDto,
+	) {
+		const membership = await this.membershipService.createMembership(
+			getGroupDto,
+			createMembershipDto,
+		);
+
+		await membership.populate('user');
+
+		return MembershipResponseDto.create(membership);
 	}
 }
