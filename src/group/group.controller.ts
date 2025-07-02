@@ -24,7 +24,10 @@ import { UpdateGroupDto } from './dto/update-group.dto';
 import { MembershipService } from './membership.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { MembershipResponseDto } from './dto/membership-response.dto';
-import { GetMembershipDto } from './dto/get-membership.dto';
+import { UserIdPipe } from 'src/user/pipes';
+import { GroupDocument } from './schemas/group.schema';
+import { UserDocument } from 'src/user/schemas/user.schema';
+import { GroupIdPipe } from './pipes';
 
 @Controller('group')
 export class GroupController {
@@ -113,11 +116,13 @@ export class GroupController {
 	@Post(':id/members/:userId')
 	@ApiCreatedResponse({ type: MembershipResponseDto })
 	async createMembership(
-		@Param() getGroupDto: GetMembershipDto,
+		@Param('id', GroupIdPipe) group: GroupDocument,
+		@Param('userId', UserIdPipe) user: UserDocument,
 		@Body() createMembershipDto: CreateMembershipDto,
 	) {
 		const membership = await this.membershipService.createMembership(
-			getGroupDto,
+			group,
+			user,
 			createMembershipDto,
 		);
 

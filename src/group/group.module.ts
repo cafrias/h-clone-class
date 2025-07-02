@@ -7,6 +7,7 @@ import { GroupSchema } from './schemas/group.schema';
 import { MembershipService } from './membership.service';
 import { Membership, MembershipSchema } from './schemas/membership.schema';
 import { UserModule } from 'src/user/user.module';
+import { GroupIdPipe } from './pipes';
 
 @Module({
 	imports: [
@@ -17,7 +18,7 @@ import { UserModule } from 'src/user/user.module';
 		UserModule,
 	],
 	controllers: [GroupController],
-	providers: [GroupService, MembershipService],
+	providers: [GroupService, MembershipService, GroupIdPipe],
 	exports: [GroupService],
 })
 export class GroupModule {}

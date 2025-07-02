@@ -1,17 +1,12 @@
-import {
-	ConflictException,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Membership, MembershipDocument } from './schemas/membership.schema';
-import { GetMembershipDto } from './dto/get-membership.dto';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { isMongoErrorWithKeyPattern } from 'src/errors/MongoErrorWithKeyPattern';
 import { Group, GroupDocument } from './schemas/group.schema';
-import { isMongoId } from 'class-validator';
 import { UserService } from '../user/user.service';
+import { UserDocument } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class MembershipService {
@@ -24,29 +19,10 @@ export class MembershipService {
 	) {}
 
 	async createMembership(
-		getDto: GetMembershipDto,
+		group: GroupDocument,
+		user: UserDocument,
 		createDto: CreateMembershipDto,
 	): Promise<MembershipDocument> {
-		// TODO: move higher
-		let group: GroupDocument | null;
-		if (isMongoId(getDto.id)) {
-			group = await this.groupModel.findById(getDto.id);
-		} else {
-			group = await this.groupModel.findOne({
-				groupId: getDto.id,
-			});
-		}
-
-		if (!group) {
-			throw new NotFoundException(`Group ${getDto.id} not found`);
-		}
-
-		const user = await this.userService.getUserByUserId(getDto.userId);
-
-		if (!user) {
-			throw new NotFoundException(`User ${getDto.userId} not found`);
-		}
-
 		try {
 			return await this.membershipModel.create({
 				group: group._id,
@@ -55,9 +31,9 @@ export class MembershipService {
 			});
 		} catch (error) {
 			if (isMongoErrorWithKeyPattern(error)) {
-				if (error.keyPattern.groupId && error.keyPattern.userId) {
+				if (error.keyPattern.group && error.keyPattern.user) {
 					throw new ConflictException(
-						`User ${getDto.userId} is already a member of group ${getDto.id}`,
+						`User ${user.userId} is already a member of group ${group.groupId}`,
 					);
 				}
 			}
